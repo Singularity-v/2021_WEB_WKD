@@ -48,7 +48,7 @@ import {
   createOrderApi,
   getOrderById,
   getOrderByUser,
-} from "../api/index";
+} from "../api/index.js";
 
 export const addCartItem = (dispatch, product, qty,col,colNum) => {
   const item = {
