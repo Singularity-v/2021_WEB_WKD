@@ -7,7 +7,7 @@ import { requestOrderDetail } from "../action"
 import { StoreContext } from "../store";
 
 export default function OrderCard({ orderId }) {
-   const { state: { orderDetail: { loading, order } }, dispatch } = useContext(StoreContext);
+   const { state: { orderDetail: { loading, order } } } = useContext(StoreContext);
    const { orderItems } = order;
    const history = useHistory()
    const antIcon = <LoadingOutlined style={{ fontSize: 80, color: "#8183ff" }} spin />;
@@ -44,7 +44,7 @@ export default function OrderCard({ orderId }) {
     };
 
    useEffect(() => {
-      requestOrderDetail(dispatch, orderId)
+      requestOrderDetail( orderId)
    }, [orderId])
 
    return (
