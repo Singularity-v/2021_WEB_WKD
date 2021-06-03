@@ -10,12 +10,12 @@ const { Header, Content, Footer } = Layout;
 function Login(props) {
   const { redirect } = QueryString.parse(props.location.search);
   return (
-    <Layout className="main-layout">
+    <Layout className="container main-layout">
       <Layout className="bg-gray main-area">
         <Header className="layout-header">
           <AppHeader title="Login Page" />
         </Header>
-        <Content className="Login-content">
+        <Content className="layout-content">
           <LoginCard redirect={redirect} />
         </Content>
         <Footer className="layout-footer">

@@ -32,11 +32,15 @@ import {
   SEARCH_USER_ORDERS,
   SUCCESS_SEARCH,
   FAIL_SEARCH,
+  BEGIN_PRODUCTS_FEED,
+  SUCCESS_PRODUCTS_FEED,
+  FAIL_PRODUCTS_FEED,
 } from "../utils/constants";
 
 import {
   getProducts,
   getProductById,
+  feedProducts,
   signInWithEmailPassword,
   registerWithEmailPassword,
   signOut,
@@ -44,11 +48,12 @@ import {
   createOrderApi,
   getOrderById,
   getOrderByUser,
-} from "../api/index.js";
+} from "../api/index";
 
 export const addCartItem = (dispatch, product, qty,col,colNum) => {
   const item = {
     id: product.id,
+    category: product.category,
     name: product.name,
     image: product.image,
     price: product.price,
@@ -71,35 +76,40 @@ export const removeCartItem = (dispatch, productId) => {
   });
 };
 
+export const saveShippingAddress = (dispatch, shippingAddress) => {
+  dispatch({
+    type: SAVE_SHIPPING_ADDRESS,
+    payload: shippingAddress,
+  });
+  localStorage.setItem('shippingAddress', JSON.stringify(shippingAddress));
+}
 
-// export const setProductDetail = (dispatch, productId, qty,col,colNum) => {
-//   const product = products.find(
-//     x => x.id === productId
-//   );
-  
-//   if(qty === 0 && product.countInStock >0)
-//       qty = 1;
-//       if(col==="")col="None";
+export const savePaymentMethod = (dispatch, paymentMethod) => {
+  dispatch({
+    type: SAVE_PAYMENT_METHOD,
+    payload: paymentMethod.paymentMethod,
+  });
+}
 
-//   dispatch({
-//     type: SET_PRODUCT_DETAIL,
-//     payload: {
-//       product,
-//       qty,
-//       col,
-//       colNum
-//     }
-//   })
-// }
+export const feedJSONToFirebase = async (dispatch) => {
+  dispatch({ type: BEGIN_PRODUCTS_FEED });
+  try {
+    await feedProducts();
+    dispatch({ type: SUCCESS_PRODUCTS_FEED });
+  } catch (error) {
+    console.log(error);
+    dispatch({ type: FAIL_PRODUCTS_FEED, payload: error });
+  }
+}
 
 export const setProductDetail = async (dispatch, productId, qty,col,colNum) => {
   dispatch({ type: BEGIN_PRODUCTS_REQUEST });
   try {
     const product = await getProductById(productId);
-      if(qty === 0 && product.countInStock >0)
-      qty = 1;
-      if(col==="")col="None";
-
+      // if(qty === 0 && product.countInStock >0)
+      // qty = 1;
+      // if(col==="")col="None";
+    if(qty===0)
     dispatch({
       type: SET_PRODUCT_DETAIL,
       payload: {
@@ -109,6 +119,16 @@ export const setProductDetail = async (dispatch, productId, qty,col,colNum) => {
         colNum
             }
           })
+        else
+        dispatch({
+          type: SET_PRODUCT_DETAIL,
+          payload: {
+            product,
+            qty,
+            col,
+            colNum
+                }
+              })
     dispatch({ type: SUCCESS_PRODUCTS_REQUEST });
   } catch (error) {
     console.log(error);
@@ -139,21 +159,6 @@ export const setPage = async (dispatch, url, title) => {
     dispatch({ type: FAIL_PRODUCTS_REQUEST, payload: error });
   }
 }
-
-export const pageContentsSet = (dispatch, title, products) => {
-  dispatch({
-    type: SET_PAGE_CONTENT,
-    payload: { title, products },
-  });
-};
-
-export const activeNavItemSet = (dispatch, activeNavItem) => {
-  dispatch({
-    type: SET_NAVBAR_ACTIVEITEM,
-    payload: activeNavItem,
-  });
-};
-
 
 export const loginToFirebase = async (dispatch, userInfo) => {
   dispatch({ type: BEGIN_LOGIN_REQUEST });
@@ -202,20 +207,32 @@ export const registerToFirebase = async (dispatch, userInfo) => {
   }
 }
 
-export const saveShippingAddress = (dispatch, shippingAddress) => {
-  dispatch({
-    type: SAVE_SHIPPING_ADDRESS,
-    payload: shippingAddress,
-  });
-  localStorage.setItem('shippingAddress', JSON.stringify(shippingAddress));
+export const updateUserInfo = async (dispatch, userInfo) => {
+  dispatch({ type: BEGIN_UPDATE_USERINFO });
+  try {
+    const user = await updateUserInfoApi(
+      userInfo.email,
+      userInfo.password,
+      userInfo.name
+    );
+    dispatch({
+      type: SUCCESS_UPDATE_USERINFO,
+      payload: user.providerData[0],
+    });
+  } catch (e) {
+    dispatch({
+      type: FAIL_UPDATE_USERINFO,
+      payload: e.message,
+    });
+    console.log(e);
+  }
+};
+
+export const logoutFromFirebase = async (dispatch) => {
+  signOut();
+  dispatch({ type: LOGOUT_REQUEST });
 }
 
-export const savePaymentMethod = (dispatch, paymentMethod) => {
-  dispatch({
-    type: SAVE_PAYMENT_METHOD,
-    payload: paymentMethod.paymentMethod,
-  });
-}
 
 export const createOrder = async (dispatch, cart) => {
   dispatch({ type: BEGIN_ORDER_CREATE });
@@ -261,26 +278,6 @@ export const requestOrderDetail = async (dispatch, orderId) => {
   }
 }
 
-export const updateUserInfo = async (dispatch, userInfo) => {
-  dispatch({ type: BEGIN_UPDATE_USERINFO });
-  try {
-    const user = await updateUserInfoApi(
-      userInfo.email,
-      userInfo.password,
-      userInfo.name
-    );
-    dispatch({
-      type: SUCCESS_UPDATE_USERINFO,
-      payload: user.providerData[0],
-    });
-  } catch (e) {
-    dispatch({
-      type: FAIL_UPDATE_USERINFO,
-      payload: e.message,
-    });
-    console.log(e);
-  }
-};
 
 export const resetOrder = (dispatch) => {
   dispatch({ type: RESET_ORDER });
@@ -301,10 +298,21 @@ export const getUserOrders = async (dispatch) => {
     });
   }
 }
-export const logoutFromFirebase = async (dispatch) => {
-  signOut();
-  dispatch({ type: LOGOUT_REQUEST });
-}
+
+// export const pageContentsSet = (dispatch, title, products) => {
+//   dispatch({
+//     type: SET_PAGE_CONTENT,
+//     payload: { title, products },
+//   });
+// };
+
+// export const activeNavItemSet = (dispatch, activeNavItem) => {
+//   dispatch({
+//     type: SET_NAVBAR_ACTIVEITEM,
+//     payload: activeNavItem,
+//   });
+// };
+
 
 // export const checkLogin = (dispatch) => {
 //   const isLogin = checkLoginApi();
@@ -313,4 +321,24 @@ export const logoutFromFirebase = async (dispatch) => {
 //     dispatch({ type: LOGOUT_REQUEST });    
 //   }
 //   return isLogin;
+// }
+
+// export const setProductDetail = (dispatch, productId, qty,col,colNum) => {
+//   const product = products.find(
+//     x => x.id === productId
+//   );
+  
+//   if(qty === 0 && product.countInStock >0)
+//       qty = 1;
+//       if(col==="")col="None";
+
+//   dispatch({
+//     type: SET_PRODUCT_DETAIL,
+//     payload: {
+//       product,
+//       qty,
+//       col,
+//       colNum
+//     }
+//   })
 // }

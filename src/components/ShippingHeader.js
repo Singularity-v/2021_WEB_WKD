@@ -14,14 +14,14 @@ export default function ShippingHeader(props) {
   };
 
   return (
-    <header className="shipping-header">
+    <header className="header">
       <div className="header-wrap">
-        <div className="shipping-header-text">
-          <h3 className="header-title" onClick={onClickHeader}>{props.title}</h3>
+        <div className="header-text">
+          <h1 className="header-title" onClick={onClickHeader}>{props.title}</h1>
         </div>
       </div>
 
-      <CheckoutSteps className="checkoutsteps" {...props}></CheckoutSteps>
+      <CheckoutSteps {...props}></CheckoutSteps>
     </header>
   );
 }

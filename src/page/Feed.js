@@ -1,28 +1,28 @@
-import { Layout } from "antd";
-
-import AppHeader from "../components/Header";
-import AppFooter from "../components/Footer";
-import Feeder from "../components/Feeder.js";
+import { Layout } from 'antd';
+import AppHeader from "../components/Header"
+import AppFooter from "../components/Footer"
+import Feeder from "../components/Feeder";
 
 const { Header, Content, Footer } = Layout;
 
 function Feed() {
-  
   return (
-    <Layout className="main-layout">
-      <Layout className="main-area">
+    <Layout className="container main-layout">
+      {/* <Layout className="bg-gray nav-area">
+        <NavBar />
+      </Layout> */}
+      <Layout className="bg-gray main-area">
         <Header className="layout-header">
-          <AppHeader title="Fee JSON Page" />
+          <AppHeader title="Feed JSON Page" />
         </Header>
-        <Content className="main-content">
-          <Feeder  />
+        <Content className="layout-content">
+          <Feeder />
         </Content>
         <Footer className="layout-footer">
           <AppFooter />
         </Footer>
       </Layout>
     </Layout>
-    
   );
 }
 

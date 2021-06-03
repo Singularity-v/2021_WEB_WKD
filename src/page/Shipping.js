@@ -6,12 +6,12 @@ const { Header, Content, Footer } = Layout;
 
 function Shipping() {
   return (
-    <Layout className="main-layout">
+    <Layout className="container main-layout">
       <Layout className="bg-gray main-area">
         <Header className="layout-header">
           <ShippingHeader title="Shipping Page" step1 step2 />
         </Header>
-        <Content className="Shipping-content">
+        <Content className="layout-content">
           <ShippingAddressCard />
         </Content>
         <Footer className="layout-footer">

@@ -7,9 +7,9 @@ import { addCartItem, removeCartItem, setProductDetail } from "../action";
 import { FrownOutlined } from '@ant-design/icons';
 const { Option } = Select;
 
-export default function CartModal({ isModalVisible, toggleModal }) {
-   const { state: { cartItems }, dispatch } = useContext(StoreContext);
-   const handleCancel = () => toggleModal(!isModalVisible);
+export default function CartModal() {
+   const { state: {cart:{ cartItems }}, dispatch } = useContext(StoreContext);
+   // const handleCancel = () => toggleModal(!isModalVisible);
    const getTotalPrice = () => {
       return (cartItems.length > 0) ?
          cartItems.reduce((sum, item) => sum + item.price * item.qty, 0)
@@ -45,10 +45,10 @@ export default function CartModal({ isModalVisible, toggleModal }) {
             cartItems.map(item => (
                <div className="shopping-container1">
                   <li key={item.id} className="cart-item">
-                     <Link to={`/product/${item.id}`} className="cart-image">
+                     <Link to={`/products/${item.category}/${item.id}`} className="cart-image">
                         <div  onClick={()=>{
                            setProductDetail(dispatch, item.id, item.qty);
-                           handleCancel();
+                           // handleCancel();
                         }}>
                            <img src={item.image} alt={item.name} />
                         </div>
